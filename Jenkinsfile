@@ -10,6 +10,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Main. Building...'
+                sh 'ls -al ./scripts'
                 sh './scripts/build.sh'
             }
         }
