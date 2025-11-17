@@ -7,7 +7,7 @@ pipeline {
                 echo 'Main. Checking out...'
                 sh 'git branch -a'
                 sh 'ls -al'
-                checkout scm
+                checkout scmGit(branches: [[name: 'main']], extensions: [], userRemoteConfigs: [])
                 echo 'Main. Debug after Check out...'
                 sh 'git branch -a'
                 sh 'ls -al'
