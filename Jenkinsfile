@@ -17,7 +17,7 @@ pipeline {
         }
         stage('Test') {
             steps {
-                echo 'Mail. Testing...'
+                echo 'Main. Testing...'
                 nodejs('node') {
                     sh 'bash ./scripts/test.sh'
                 }                
@@ -43,7 +43,7 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                echo 'Mail. Deploying...'
+                echo 'Main. Deploying...'
             }
         }
     }
