@@ -6,8 +6,8 @@ pipeline {
             steps {
                 echo 'Main. Checking out...'
                 script {
-                    git branch -a
-                    ls -al
+                    sh 'git branch -a'
+                    sh 'ls -al'
                 }
             }
         }
