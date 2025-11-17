@@ -26,16 +26,18 @@ pipeline {
         stage('Build Image') {
             steps {
                 echo 'Main. Building image...'
-                switch (env.BRANCH_NAME) {
-                    case 'main':
-                        sh 'docker build -t nodemain:v1.0 .'
-                        break
-                    case 'dev':
-                        sh 'docker build -t nodedev:v1.0 .'
-                        break
-                    default:
-                        echo 'Unknown branch'
-                        break
+                script {
+                    switch (env.BRANCH_NAME) {
+                        case 'main':
+                            sh 'docker build -t nodemain:v1.0 .'
+                            break
+                        case 'dev':
+                            sh 'docker build -t nodedev:v1.0 .'
+                            break
+                        default:
+                            echo 'Unknown branch'
+                            break
+                    }
                 }
             }
         }
