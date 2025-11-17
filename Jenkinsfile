@@ -26,6 +26,7 @@ pipeline {
         stage('Build Image') {
             steps {
                 echo 'Main. Building image...'
+                sh 'cat Jenkinsfile'
                 script {
                     switch (env.BRANCH_NAME) {
                         case 'main':
