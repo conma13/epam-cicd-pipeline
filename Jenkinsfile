@@ -10,8 +10,8 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Main. Building...'
-                sh 'ls -al ./scripts'
-                sh './scripts/build.sh'
+                
+                sh 'bash ./scripts/build.sh'
             }
         }
         stage('Test') {
