@@ -10,14 +10,17 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Main. Building...'
-                
-                sh 'bash ./scripts/build.sh'
+                nodejs('node') {
+                    sh 'bash ./scripts/build.sh'
+                }                
             }
         }
         stage('Test') {
             steps {
                 echo 'Mail. Testing...'
-                sh './scripts/test.sh'
+                nodejs('node') {
+                    sh 'bash ./scripts/test.sh'
+                }                
             }
         }
         stage('Build Image') {
