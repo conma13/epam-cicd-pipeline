@@ -4,9 +4,11 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                echo 'Main. Checking out...'
-                git branch -a
-                ls -al .
+                script {
+                    echo 'Main. Checking out...'
+                    git branch -a
+                    ls -al .
+                }
             }
         }
         stage('Build') {
