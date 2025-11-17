@@ -5,10 +5,13 @@ pipeline {
         stage('Checkout') {
             steps {
                 echo 'Main. Checking out...'
-                script {
-                    sh 'git branch -a'
-                    sh 'ls -al'
-                }
+                sh 'git branch -a'
+                sh 'ls -al'
+                checkout scm
+                echo 'Main. Debug after Check out...'
+                sh 'git branch -a'
+                sh 'ls -al'
+                echo 'Main. Checked out...'
             }
         }
         stage('Build') {
