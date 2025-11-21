@@ -58,13 +58,12 @@ pipeline {
                 script {
                     switch (env.BRANCH_NAME) {
                         case 'main':
-                            docker.withServer('tcp://docker:2375') {
-                                docker.image('nodemain:v1.0').run('--expose 3000 -p 3000:3000')
-                            }
+                            sh 'docker -H tcp://docker:2375 rm -f nodemain' || true
+                            sh 'docker -H tcp://docker:2376 run -d --name nodemain --expose 3000 -p 3000:3000 nodemain:v1.0'
                             break
                         case 'dev':
                             docker.withServer('tcp://docker:2375') {
-                                docker.image('nodedev:v1.0').run('--expose 3000 -p 3001:3000')
+                                docker.image('nodedev:v1.0').run('--name nodedev --expose 3000 -p 3001:3000')
                             }
                             break
                         default:
