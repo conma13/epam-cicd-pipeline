@@ -59,7 +59,7 @@ pipeline {
                     switch (env.BRANCH_NAME) {
                         case 'main':
                             sh 'docker -H tcp://docker:2375 rm -f nodemain || true'
-                            sh 'docker -H tcp://docker:2376 run -d --name nodemain --expose 3000 -p 3000:3000 nodemain:v1.0'
+                            sh 'docker -H tcp://docker:2375 run -d --name nodemain --expose 3000 -p 3000:3000 nodemain:v1.0'
                             break
                         case 'dev':
                             docker.withServer('tcp://docker:2375') {
