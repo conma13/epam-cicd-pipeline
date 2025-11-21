@@ -1,10 +1,6 @@
 #!/usr/bin/env groovy
 pipeline {
-    agent {
-        docker {
-            image 'docker'
-        }
-    }
+    agent any
 
     stages {
         stage('Checkout') {
@@ -35,7 +31,9 @@ pipeline {
                 script {
                     switch (env.BRANCH_NAME) {
                         case 'main':
-                            def myImage = docker.build 'nodemain:v1.0'
+                            withTool('docker') {
+                                def myImage = docker.build 'nodemain:v1.0'
+                            }
                             break
                         case 'dev':
                             def myImage = docker.build 'nodedev:v1.0'
