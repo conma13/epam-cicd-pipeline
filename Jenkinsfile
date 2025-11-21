@@ -10,48 +10,69 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [])
+                echo 'Checked out successfully'
             }
         }
         stage('Build') {
             steps {
-                echo 'Main. Building...'
                 nodejs('node') {
                     sh 'bash ./scripts/build.sh'
                 }                
+                echo 'Built successfully'
             }
         }
         stage('Test') {
             steps {
-                echo 'Main. Testing...'
                 nodejs('node') {
                     sh 'bash ./scripts/test.sh'
                 }                
+                echo 'Tested successfully'
             }
         }
         stage('Build Image') {
             steps {
-                echo 'Main. Building image...'
-                sh 'cat Jenkinsfile'
                 script {
                     switch (env.BRANCH_NAME) {
                         case 'main':
+                            sh 'cp src/main.svg src/logo.svg'
                             docker.withServer('tcp://docker:2375') {
                                 def myImage = docker.build 'nodemain:v1.0'
                             }
                             break
                         case 'dev':
-                            def myImage = docker.build 'nodedev:v1.0'
+                            sh 'cp src/dev.svg src/logo.svg'
+                            docker.withServer('tcp://docker:2375') {
+                                def myImage = docker.build 'nodedev:v1.0'
+                            }
                             break
                         default:
-                            echo 'Unknown branch'
+                            echo 'Unknown branch. Nothing to do'
                             break
                     }
                 }
+                echo 'Image built successfully'
             }
         }
         stage('Deploy') {
             steps {
-                echo 'Main. Deploying...'
+                script {
+                    switch (env.BRANCH_NAME) {
+                        case 'main':
+                            docker.withServer('tcp://docker:2375') {
+                                docker.image('nodemain:v1.0').run('--expose 3000 -p 3000:3000')
+                            }
+                            break
+                        case 'dev':
+                            docker.withServer('tcp://docker:2375') {
+                                docker.image('nodedev:v1.0').run('--expose 3000 -p 3001:3000')
+                            }
+                            break
+                        default:
+                            echo 'Unknown branch. Nothing to do'
+                            break
+                    }
+                }
+                echo 'Deployed successfully'
             }
         }
     }
