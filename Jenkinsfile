@@ -2,6 +2,10 @@
 pipeline {
     agent any
 
+    tools {
+        docker 'docker'
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -31,9 +35,7 @@ pipeline {
                 script {
                     switch (env.BRANCH_NAME) {
                         case 'main':
-                            docker.withTool('docker') {
-                                def myImage = docker.build 'nodemain:v1.0'
-                            }
+                            def myImage = docker.build 'nodemain:v1.0'
                             break
                         case 'dev':
                             def myImage = docker.build 'nodedev:v1.0'
