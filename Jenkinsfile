@@ -31,7 +31,7 @@ pipeline {
                 script {
                     switch (env.BRANCH_NAME) {
                         case 'main':
-                            withTool('docker') {
+                            docker.withTool('docker') {
                                 def myImage = docker.build 'nodemain:v1.0'
                             }
                             break
