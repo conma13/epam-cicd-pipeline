@@ -1,5 +1,6 @@
+#!/usr/bin/env groovy
 pipeline {
-    agent any
+    agent docker
 
     stages {
         stage('Checkout') {
