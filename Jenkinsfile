@@ -10,19 +10,6 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [])
-                script {
-                    switch (env.BRANCH_NAME) {
-                        case 'main':
-                            sh 'cp src/main.svg src/logo.svg'
-                            break
-                        case 'dev':
-                            sh 'cp src/dev.svg src/logo.svg'
-                            break
-                        default:
-                            echo 'Checking out. Unknown branch. Nothing to do'
-                            break
-                    }
-                }
                 echo 'Checked out successfully'
             }
         }
