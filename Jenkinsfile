@@ -38,16 +38,16 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    def port = ""
+                    def port = ''
                     switch (env.BRANCH_NAME) {
                         case "main":
-                            port = "3000"
+                            port = '3000'
                             break
                         case "dev":
-                            port = "3001"
+                            port = '3001'
                             break
                         default:
-                            port = "3000"
+                            port = '3000'
                             break
                     }
                     sh '''
