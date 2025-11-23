@@ -10,6 +10,19 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [])
+                script {
+                    switch (env.BRANCH_NAME) {
+                        case 'main':
+                            sh 'cp src/main.svg src/logo.svg'
+                            break
+                        case 'dev':
+                            sh 'cp src/dev.svg src/logo.svg'
+                            break
+                        default:
+                            echo 'Checking out. Unknown branch. Nothing to do'
+                            break
+                    }
+                }
                 echo 'Checked out successfully'
             }
         }
@@ -34,19 +47,13 @@ pipeline {
                 script {
                     switch (env.BRANCH_NAME) {
                         case 'main':
-                            sh 'cp src/main.svg src/logo.svg'
-                            docker.withServer('tcp://docker:2375') {
-                                def myImage = docker.build 'nodemain:v1.0'
-                            }
+                            sh 'docker -H tcp://docker:2375 build -t nodemain:v1.0 .'
                             break
                         case 'dev':
-                            sh 'cp src/dev.svg src/logo.svg'
-                            docker.withServer('tcp://docker:2375') {
-                                def myImage = docker.build 'nodedev:v1.0'
-                            }
+                            sh 'docker -H tcp://docker:2375 build -t nodedev:v1.0 .'
                             break
                         default:
-                            echo 'Unknown branch. Nothing to do'
+                            echo 'Building image. Unknown branch. Nothing to do'
                             break
                     }
                 }
@@ -62,12 +69,11 @@ pipeline {
                             sh 'docker -H tcp://docker:2375 run -d --name nodemain --expose 3000 -p 3000:3000 nodemain:v1.0'
                             break
                         case 'dev':
-                            docker.withServer('tcp://docker:2375') {
-                                docker.image('nodedev:v1.0').run('--name nodedev --expose 3000 -p 3001:3000')
-                            }
+                            sh 'docker -H tcp://docker:2375 rm -f nodedev || true'
+                            sh 'docker -H tcp://docker:2375 run -d --name nodedev --expose 3001 -p 3001:3000 nodedev:v1.0'
                             break
                         default:
-                            echo 'Unknown branch. Nothing to do'
+                            echo 'Deploying. Unknown branch. Nothing to do'
                             break
                     }
                 }
