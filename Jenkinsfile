@@ -51,7 +51,10 @@ pipeline {
                             break
                     }
                     sh '''
-                      CONTAINERS=$(docker -H tcp://docker:2375 ps --filter "publish=${port}" -q)
+                      echo "port=" ${port}
+                      filter = "publish=${port}"
+                      echo "filter=" ${filter}
+                      CONTAINERS=$(docker -H tcp://docker:2375 ps --filter "${filter}" -q)
                       if [ -n "$CONTAINERS" ]; then
                         echo "Stop containers on ${port} port: ${CONTAINERS}"
                         docker -H tcp://docker:2375 rm -f ${CONTAINERS}
