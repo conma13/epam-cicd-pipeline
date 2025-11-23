@@ -9,19 +9,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                script {
-                    switch (env.BRANCH_NAME) {
-                        case 'main':
-                            checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [])
-                            break
-                        case 'dev':
-                            checkout scmGit(branches: [[name: '*/dev']], extensions: [], userRemoteConfigs: [])
-                            break
-                        default:
-                            echo 'Checking out. Unknown branch. Nothing to do'
-                            break
-                    }
-                }
+                checkout scmGit(branches: [[name: '*/${BRANCH_NAME}']], extensions: [], userRemoteConfigs: [])
                 echo 'Checked out successfully'
             }
         }
@@ -43,38 +31,27 @@ pipeline {
         }
         stage('Build Image') {
             steps {
-                script {
-                    switch (env.BRANCH_NAME) {
-                        case 'main':
-                            sh 'docker -H tcp://docker:2375 build -t nodemain:v1.0 .'
-                            break
-                        case 'dev':
-                            sh 'docker -H tcp://docker:2375 build -t nodedev:v1.0 .'
-                            break
-                        default:
-                            echo 'Building image. Unknown branch. Nothing to do'
-                            break
-                    }
-                }
+                sh 'docker -H tcp://docker:2375 build -t node${BRANCH_NAME}:v1.0 .'
                 echo 'Image built successfully'
             }
         }
         stage('Deploy') {
             steps {
                 script {
+                    def port = ''
                     switch (env.BRANCH_NAME) {
                         case 'main':
-                            sh 'docker -H tcp://docker:2375 rm -f nodemain || true'
-                            sh 'docker -H tcp://docker:2375 run -d --name nodemain --expose 3000 -p 3000:3000 nodemain:v1.0'
+                            def port = '3000'
                             break
                         case 'dev':
-                            sh 'docker -H tcp://docker:2375 rm -f nodedev || true'
-                            sh 'docker -H tcp://docker:2375 run -d --name nodedev --expose 3001 -p 3001:3000 nodedev:v1.0'
+                            def port = '3001'
                             break
                         default:
-                            echo 'Deploying. Unknown branch. Nothing to do'
+                            def port = '3000'
                             break
                     }
+                    sh 'docker -H tcp://docker:2375 rm -f node${BRANCH_NAME} || true'
+                    sh 'docker -H tcp://docker:2375 run -d --name node${BRANCH_NAME} --expose ${port} -p ${port}:3000 node${BRANCH_NAME}:v1.0'
                 }
                 echo 'Deployed successfully'
             }
