@@ -41,13 +41,13 @@ pipeline {
                     def port = ''
                     switch (env.BRANCH_NAME) {
                         case 'main':
-                            def port = '3000'
+                            port = '3000'
                             break
                         case 'dev':
-                            def port = '3001'
+                            port = '3001'
                             break
                         default:
-                            def port = '3000'
+                            port = '3000'
                             break
                     }
                     sh 'docker -H tcp://docker:2375 rm -f node${BRANCH_NAME} || true'
