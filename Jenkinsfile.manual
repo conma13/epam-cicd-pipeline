@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                checkout scmGit(branches: [[name: '*/${BRANCH_NAME}']], extensions: [], userRemoteConfigs: [])
+                checkout scmGit(branches: [[name: '*/${Branch}']], extensions: [], userRemoteConfigs: [])
                 echo 'Checked out successfully'
             }
         }
@@ -31,37 +31,22 @@ pipeline {
         }
         stage('Build Image') {
             steps {
-                sh 'docker -H tcp://docker:2375 build -t node${BRANCH_NAME}:v1.0 .'
+                sh 'docker -H tcp://docker:2375 build -t ${ImageTag} .'
                 echo 'Image built successfully'
             }
         }
         stage('Deploy') {
             steps {
                 script {
-                    def port = ""
-                    switch (env.BRANCH_NAME) {
-                        case "main":
-                            port = "3000"
-                            break
-                        case "dev":
-                            port = "3001"
-                            break
-                        default:
-                            port = "3000"
-                            break
-                    }
                     sh '''
-                      CONTAINERS=$(docker -H tcp://docker:2375 ps --filter "publish=${port}" -q)
+                      CONTAINERS=$(docker -H tcp://docker:2375 ps --filter "publish=3000" -q)
                       if [ -n "$CONTAINERS" ]; then
-                        echo "Stop containers on ${port} port: ${CONTAINERS}"
+                        echo "Stop containers on 3000 port: ${CONTAINERS}"
                         docker -H tcp://docker:2375 rm -f ${CONTAINERS}
                       else
-                        echo "No containers on port ${port}"
+                        echo "No containers on port 3000"
                       fi
-                      docker -H tcp://docker:2375 \
-                        run -d --name node${BRANCH_NAME} \
-                        --expose ${port} -p ${port}:3000 \
-                        node${BRANCH_NAME}:v1.0
+                      docker -H tcp://docker:2375 run -d --name ${ImageTag} --expose 3000 -p 3000:3000 ${ImageTag}
                     '''
                 }
                 echo 'Deployed successfully'
