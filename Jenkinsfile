@@ -52,17 +52,17 @@ pipeline {
                     }
                     sh """
                       echo "port=${port}"
-                      CONTAINERS=$(docker -H tcp://docker:2375 ps --filter "publish=${port}" -q)
-                      if [ -n "$CONTAINERS" ]; then
-                        echo "Stop containers on ${port} port: ${CONTAINERS}"
-                        docker -H tcp://docker:2375 rm -f ${CONTAINERS}
+                      CONTAINERS=\$(docker -H tcp://docker:2375 ps --filter "publish=${port}" -q)
+                      if [ -n "\$CONTAINERS" ]; then
+                        echo "Stop containers on ${port} port: \${CONTAINERS}"
+                        docker -H tcp://docker:2375 rm -f \${CONTAINERS}
                       else
                         echo "No containers on port ${port}"
                       fi
                       docker -H tcp://docker:2375 \
-                        run -d --name node${BRANCH_NAME} \
+                        run -d --name node\${BRANCH_NAME} \
                         --expose ${port} -p ${port}:3000 \
-                        node${BRANCH_NAME}:v1.0
+                        node\${BRANCH_NAME}:v1.0
                     """
                 }
                 echo 'Deployed successfully'
