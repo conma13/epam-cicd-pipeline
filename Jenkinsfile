@@ -51,7 +51,12 @@ pipeline {
                             break
                     }
                     sh 'docker -H tcp://docker:2375 rm -f node${BRANCH_NAME} || true'
-                    sh 'docker -H tcp://docker:2375 run -d --name node${BRANCH_NAME} --expose ${port} -p ${port}:3000 node${BRANCH_NAME}:v1.0'
+                    sh """
+                      docker -H tcp://docker:2375 \
+                        run -d --name node${BRANCH_NAME} \
+                        --expose ${port} -p ${port}:3000 \
+                        node${BRANCH_NAME}:v1.0'
+                    """
                 }
                 echo 'Deployed successfully'
             }
