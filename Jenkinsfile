@@ -50,11 +50,9 @@ pipeline {
                             port = '3000'
                             break
                     }
-                    sh '''
+                    sh """
                       echo "port=" ${port}
-                      filter = "publish=${port}"
-                      echo "filter=" ${filter}
-                      CONTAINERS=$(docker -H tcp://docker:2375 ps --filter "${filter}" -q)
+                      CONTAINERS=$(docker -H tcp://docker:2375 ps --filter "publish=${port}" -q)
                       if [ -n "$CONTAINERS" ]; then
                         echo "Stop containers on ${port} port: ${CONTAINERS}"
                         docker -H tcp://docker:2375 rm -f ${CONTAINERS}
@@ -65,7 +63,7 @@ pipeline {
                         run -d --name node${BRANCH_NAME} \
                         --expose ${port} -p ${port}:3000 \
                         node${BRANCH_NAME}:v1.0
-                    '''
+                    """
                 }
                 echo 'Deployed successfully'
             }
