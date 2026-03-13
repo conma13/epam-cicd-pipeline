@@ -1,0 +1,28 @@
+services:
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    volumes:
+      - jenkins_home:/var/jenkins_home
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+
+  docker:
+    image: docker:28.5.2-dind
+    container_name: docker
+    privileged: true
+    command: >
+      dockerd
+      -H unix:///var/run/docker.sock
+      -H tcp://0.0.0.0:2375
+    ports:
+      - "2375:2375"
+      - "3000:3000"
+      - "3001:3001"
+    volumes:
+      - dind_data:/var/lib/docker
+
+volumes:
+  jenkins_home:
+  dind_data:
